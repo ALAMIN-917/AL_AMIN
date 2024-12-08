@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<conio.h>
+#include<stdlib.h>
+#include<string.h>
 static int n=0;
 struct STUDENT
 {
@@ -9,12 +11,14 @@ struct STUDENT
 };
 int main()
 {
+    system("color 7E");
 	void add();
 	void displayAll();
 	void record();
 	void del();
 	void record_by_name();
 	void modify();
+    void specific_record ();
 	int i,count=0,a,n=0,r,m,ms;
 
 		while(1)
@@ -25,13 +29,14 @@ int main()
 		printf("\n\t\t----------------------");
 		printf("\n\t\tSelect an option:");
 		printf("\n\t\t----------------------");
-		printf("\n\t\t1.Create Student Record");
-		printf("\n\t\t2.Delete Student Record");
-		printf("\n\t\t3.Modify Student Record");
-		printf("\n\t\t4.Search Record By Roll");
-		printf("\n\t\t5.Search Record By Name");
-		printf("\n\t\t6.Display Records");
-		printf("\n\t\t7.Exit");
+		printf("\n\t\t1.Add Student Information");
+		printf("\n\t\t2.Delete Student Information");
+		printf("\n\t\t3.Modify Student Information");
+		printf("\n\t\t4.Search Information By Roll");
+		printf("\n\t\t5.Search Information By Name");
+		printf("\n\t\t6.Search Specific Range of Student Information");
+        printf("\n\t\t7.Display All Student Information");
+		printf("\n\t\t8.Exit");
 		printf("\n\t\t----------------------\n");
 		printf("\t\tEnter your choice: ");
 		scanf("%d",&a);
@@ -40,43 +45,55 @@ int main()
 			case 1:
 			{
 				system("cls");
+                system("color 7E");
 				add();
 				break;
 			}
 			case 2:
 			{
 				system("cls");
+                system("color 7E");
 				del();
 				break;
 			}
 			case 3:
 			{
 				system("cls");
+                system("color 7E");
 				modify();
 				break;
 			}
 			case 4:
 			{
 			    system("cls");
+                system("color 7E");
 				record();
 				break;
 			}
 			case 5:
 			{
 			    system("cls");
+                system("color 7E");
 				record_by_name();
 				break;
 			}
 			case 6:
 			{
 			    system("cls");
-				displayAll();
+                system("color 7E");
+				specific_record ();
 				break;
 			}
 			case 7:
 			{
-				exit(0);
+				displayAll();
+                system("color 7E");
+                break;
 			}
+            case 8:
+            {
+                exit(0);
+            }
 
 		}
 	}
@@ -89,7 +106,7 @@ void add()
 		int size;
 		FILE *fp;
 		size=sizeof(s);
-		fp=fopen("student_data.dat","ab");
+		fp=fopen("student_data.dat","ab+");
  		printf("\n\t\tEnter Roll No: ");
 		scanf("%d",&s.roll_no);
 		printf("\n\t\tEnter Registration No: ");
@@ -110,39 +127,85 @@ void add()
 		i+=1;
 }
 
-void displayAll()
-{
-FILE *fp;
-struct STUDENT s;
+void specific_record () {
+    system("color 7E");
+    FILE *fp;
+    struct STUDENT s;
+    int startRollNo, endRollNo;
 
-fp=fopen("student_data.dat","rb");
+    // Prompt user for the roll number range
+    printf("Enter the start Roll No: ");
+    scanf("%d", &startRollNo);
+    printf("Enter the end Roll No: ");
+    scanf("%d", &endRollNo);
 
-printf("\n\t========================================================\n\n");
-printf("\t\t\t All Student Details\n\n");
-printf("\t========================================================\n\n");
+    fp = fopen("student_data.dat", "rb");
 
+    if (fp == NULL) {
+        printf("Error opening file!\n");
+        return;
+    }
 
-while(1)
-{
-fread(&s,sizeof(s),1,fp);
+    printf("\n\t========================================================\n\n");
+    printf("\t\t\t All Student Details in Range\n\n");
+    printf("\t========================================================\n\n");
 
-if(feof(fp))
-{
-break;
+    int found = 0; // To check if any records were found in the range
+
+    while (fread(&s, sizeof(s), 1, fp)) {
+        // Check if the roll number is within the specified range
+        if (s.roll_no >= startRollNo && s.roll_no <= endRollNo) {
+            found = 1; // At least one record found in the range
+            printf("\tName: %s", s.name);
+            printf("\n\tRoll No: %d", s.roll_no);
+            printf("\tRegistration No: %d", s.reg_no);
+            printf("\tFather Name: %s", s.father_name);
+            printf("\tMother Name: %s", s.mother_name);
+            printf("\tAge: %d", s.age);
+            printf("\tC-GPA: %.2f\n", s.cgpa);
+            printf("\t--------------------------------------------------------\n");
+        }
+    }
+
+    if (!found) {
+        printf("\tNo records found in the specified range (%d to %d).\n", startRollNo, endRollNo);
+    }
+
+    printf("\t========================================================\n\n");
+
+    fclose(fp);
 }
-        printf("\tName:%s",s.name);
-		printf("\n\tRoll No:%d",s.roll_no);
-		printf("\tRegistration No:%d",s.reg_no);
-		printf("\tFather Name:%s",s.father_name);
-        printf("\tMother Name:%s",s.mother_name);
-		printf("\tAge:%d",s.age);
-		printf("\tC-GPA:%.2f\n",s.cgpa);
 
-}
-printf("\t========================================================\n\n");
 
-fclose(fp);
+void displayAll() {
+    system("color 8E");
+    FILE *fp;
+    struct STUDENT s;
+
+    fp = fopen("student_data.dat", "rb");
+    if (fp == NULL) {
+        printf("Error opening file!\n");
+        return;
+    }
+
+    printf("\n\t========================================================\n\n");
+    printf("\t\t\t All Student Details\n\n");
+    printf("\t========================================================\n\n");
+    printf("\t%-20s %-10s %-20s %-20s %-20s %-5s %-10s\n", 
+           "NAME", "Roll NO", "Registration No", "Father Name", "Mother Name", "Age", "C-GPA");
+    printf("\t==========================================================================================================\n");
+
+    while (fread(&s, sizeof(s), 1, fp)) {
+        printf("\t%-20s %-10d %-20d %-20s %-20s %-5d %-10.2f\n", 
+               s.name, s.roll_no, s.reg_no, s.father_name, s.mother_name, s.age, s.cgpa);
+        printf("\t=========================================================================================================\n");
+    }
+
+    printf("\t============================================================================================================\n\n");
+    fclose(fp);
 }
+
+
 void record()
 {
 FILE *fp;
@@ -194,21 +257,21 @@ void record_by_name() {
         return;
     }
 
-    printf("\nEnter the student name: ");
+    printf("\nEnter the student name (or first few characters): ");
     scanf(" %s", name);
 
     while (fread(&s, sizeof(s), 1, fp)) {
-        if (strcmp(s.name, name) == 0) {
+        // Use strncmp to compare the beginning of the names
+        if (strncmp(s.name, name, strlen(name)) == 0) {
             found = 1;
             printf("\n========================================================\n\n");
             printf("\t\t\t Student Record of %s\n\n", s.name);
             printf("\t========================================================\n\n");
-
             printf("\tName: %s\n", s.name);
             printf("\tRoll No: %d\n", s.roll_no);
             printf("\tRegistration No: %d\n", s.reg_no);
             printf("\tFather Name: %s\n", s.father_name);
-            printf("\tMother Name:%s",s.mother_name);
+            printf("\tMother Name: %s\n", s.mother_name);
             printf("\tAge: %d\n", s.age);
             printf("\tC-GPA: %.2f\n", s.cgpa);
             printf("\n========================================================\n\n");
@@ -224,63 +287,60 @@ void record_by_name() {
 
 
 
+void del() {
+    FILE *fp, *fp1;
+    struct STUDENT s;
+    int id, foundRollNo = 0;
+    char name[50];
+    int foundName = 0;
 
-void del()
-{
-FILE *fp,*fp1;
-struct STUDENT s,s1;
-int id,found=0;
+    fp = fopen("student_data.dat", "rb");
+    fp1 = fopen("temp.dat", "wb");
 
-fp=fopen("student_data.dat","rb");
-fp1=fopen("temp.dat","wb");
+    // Optionally, allow deletion by roll number or name
+    printf("\n\t\tEnter Student Roll No you want to Delete (or -1 to delete by name): ");
+    scanf("%d", &id);
 
-printf("\n\t\tEnter Student Roll No you want to Delete: ");
-scanf("%d",&id);
-while(1)
-{
-fread(&s,sizeof(s),1,fp);
+    if (id == -1) {
+        // Delete by name
+        printf("Enter Student Name you want to Delete: ");
+        scanf("%s", name);  // You might want to use fgets for full name
+    }
 
-if(feof(fp))
-{
-break;
-}
-if(s.roll_no==id)
-{
-found=1;
-}
-else
-{
-fwrite(&s,sizeof(s),1,fp1);
-}
-}
-fclose(fp);
-fclose(fp1);
+    while (fread(&s, sizeof(s), 1, fp)) {
+        if (id != -1 && s.roll_no == id) {
+            foundRollNo = 1;  // Roll number matched
+        } else if (id == -1 && strcmp(s.name, name) == 0) {
+            foundName = 1;  // Name matched
+        } else {
+            fwrite(&s, sizeof(s), 1, fp1);
+        }
+    }
 
-if(found==0)
-{
-printf("\t\tSorry No Record Found\n\n");
-}
-else
-{
-fp=fopen("student_data.dat","wb");
-fp1=fopen("temp.dat","rb");
+    fclose(fp);
+    fclose(fp1);
 
-while(1)
-{
-fread(&s,sizeof(s),1,fp1);
+    if (!foundRollNo && id != -1) {
+        printf("\t\tSorry, No Record Found with Roll No %d\n\n", id);
+    }
+    if (!foundName && id == -1) {
+        printf("\t\tSorry, No Record Found with Name %s\n\n", name);
+    } else {
+        // Overwrite the original file with the temp file
+        fp = fopen("student_data.dat", "wb");
+        fp1 = fopen("temp.dat", "rb");
 
-if(feof(fp1))
-{
-break;
-}
-fwrite(&s,sizeof(s),1,fp);
-}
-}
-fclose(fp);
-fclose(fp1);
+        while (fread(&s, sizeof(s), 1, fp1)) {
+            fwrite(&s, sizeof(s), 1, fp);
+        }
+
+        fclose(fp);
+        fclose(fp1);
+    }
+
 }
 void modify()
-{
+{    
 FILE *fp,*fp1;
 struct STUDENT s;
 int id,found=0;
@@ -303,15 +363,15 @@ if(s.roll_no==id)
 {
 found=1;
         printf("\t\tEnter new Name: ");
-		scanf("%s",s.name);
+		scanf("%s",&s.name);
 		printf("\t\tEnter new Roll No: ");
 		scanf("%d",&s.roll_no);
 		printf("\t\tEnter new Registration No: ");
-		scanf("%d",s.reg_no);
+		scanf("%d",&s.reg_no);
 		printf("\t\tEnter new Father Name: ");
-		scanf("%s",s.father_name);
+		scanf("%s",&s.father_name);
 		printf("\t\tEnter new Mother Name: ");
-		scanf("%s",s.mother_name);
+		scanf("%s",&s.mother_name);
 		printf("\t\tEnter new Age: ");
 		scanf("%d",&s.age);
 		printf("\t\tEnter C-GPA:");
@@ -350,8 +410,6 @@ fwrite(&s,sizeof(s),1,fp);
 fclose(fp);
 fclose(fp1);
 }
-
-
 
 
 
